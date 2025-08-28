@@ -4,8 +4,38 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './HeroCarousel.css';
 
-// Este componente recibirá las películas destacadas como props
+// --- NUEVO: Componente para la flecha "Siguiente" ---
+// Recibe props como className, style y onClick de la librería react-slick
+function NextArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={`${className} custom-arrow next-arrow`}
+      style={{ ...style }}
+      onClick={onClick}
+    >
+      <i className="fa-solid fa-chevron-right"></i>
+    </div>
+  );
+}
+
+// --- NUEVO: Componente para la flecha "Anterior" ---
+function PrevArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={`${className} custom-arrow prev-arrow`}
+      style={{ ...style }}
+      onClick={onClick}
+    >
+      <i className="fa-solid fa-chevron-left"></i>
+    </div>
+  );
+}
+
+
 const HeroCarousel = ({ featuredMovies }) => {
+  // --- CONFIGURACIÓN DEL SLIDER ACTUALIZADA ---
   const settings = {
     dots: true,
     infinite: true,
@@ -13,9 +43,12 @@ const HeroCarousel = ({ featuredMovies }) => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 4000,
     fade: true,
-    cssEase: 'linear'
+    cssEase: 'linear',
+    // Aquí integramos nuestros componentes de flecha personalizados
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />
   };
 
   return (
