@@ -1,5 +1,5 @@
 import React from 'react';
-import MovieCard from './MovieCard';
+import MovieCard from './MovieCard/MovieCard';
 
 // Recibe el array de películas como prop
 function MovieList({ movies }) {
