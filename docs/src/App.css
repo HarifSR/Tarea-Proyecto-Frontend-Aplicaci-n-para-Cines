@@ -1,23 +1,23 @@
+/* Contenedor principal de la aplicación */
 .app-container {
-  max-width: 1600px; /* Un poco más de ancho para pantallas grandes */
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 2rem 3rem; /* Ajustamos el padding */
+  padding: 2rem 3rem;
 }
 
-/* --- NUEVO: Encabezado de la sección Cartelera --- */
-/* --- Encabezado --- */
+/* Encabezado de la sección Cartelera (Título + Controles) */
 .cartelera-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: space-between;   /* asegura título a la izq y controles a la der */
-  gap: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
   margin-bottom: 3rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid #1b263b;
-  flex-wrap: nowrap;                /* evita saltos en desktop */
 }
 
-/* Título */
+/* Título de la sección (ej. "CARTELERA") */
 .section-title {
   font-family: var(--font-headings);
   color: var(--text-color);
@@ -26,39 +26,45 @@
   margin: 0;
   position: relative;
   padding-left: 20px;
-  line-height: 1.1;                 /* define altura consistente */
 }
 
-/* Línea decorativa: ahora ocupa todo el alto del título */
+/* Línea decorativa amarilla a la izquierda del título */
 .section-title::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 0;                           /* antes: 50% + translate */
+  top: 50%;
+  transform: translateY(-50%);
   width: 5px;
-  height: 100%;                     /* antes: 80% */
+  height: 80%;
   background-color: var(--cinepolis-yellow);
   border-radius: 5px;
 }
 
-/* Controles */
+/* Contenedor para la barra de búsqueda y los filtros */
 .controls-container {
   display: flex;
   align-items: center;
+  justify-content: flex-end; /* Alinea los controles a la derecha */
   gap: 1.5rem;
-  margin-left: auto;                /* empuja el bloque a la derecha */
-  flex: 0 1 auto;                   /* no crecer sin límite */
+  flex-wrap: wrap;
 }
 
-/* Anchos razonables y consistentes */
+/* Estilos para la barra de búsqueda */
+.search-bar {
+  position: relative;
+  width: 350px;      /* Ancho fijo para evitar conflictos */
+  flex-shrink: 0;    /* Evita que el elemento se encoja */
+}
 
-
+/* Contenedor para los menús desplegables (select) */
 .select-wrapper {
   position: relative;
-  flex: 0 0 220px;                  /* tamaño fijo cómodo */
   min-width: 200px;
+  flex-shrink: 0;    /* Evita que el elemento se encoja */
 }
 
+/* Estilos unificados para todos los inputs y selects */
 .search-bar input,
 .filter-select {
   width: 100%;
@@ -73,6 +79,15 @@
   transition: all 0.3s ease;
 }
 
+/* Efecto de foco para inputs y selects */
+.search-bar input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: var(--cinepolis-yellow);
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);
+}
+
+/* Icono de lupa dentro de la barra de búsqueda */
 .search-bar .fa-search {
   position: absolute;
   top: 50%;
@@ -81,40 +96,52 @@
   color: var(--text-color-secondary);
 }
 
-.search-bar input { padding-left: 3rem; }
+/* Espacio a la izquierda en el input para el icono */
+.search-bar input {
+  padding-left: 3rem;
+}
 
-/* Flecha personalizada del select (Font Awesome) */
+/* Flecha personalizada para los menús desplegables */
 .select-wrapper::after {
-  content: '\f078';
+  content: '\f078'; /* Icono de flecha de Font Awesome */
   font-family: 'Font Awesome 6 Free';
   font-weight: 900;
   position: absolute;
   top: 50%;
-  right: 1.0rem;                    /* un pelín más cerca del borde */
+  right: 1.5rem;
   transform: translateY(-50%);
   color: var(--text-color-secondary);
   pointer-events: none;
 }
 
+/* Oculta la flecha por defecto del navegador en los selects */
 .filter-select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  padding-right: 2.2rem;            /* cuadra con la flecha */
+  padding-right: 3rem; /* Espacio para la flecha personalizada */
 }
 
-/* Responsive: en < 992px apila ordenado a la izquierda */
+/* Cuadrícula para mostrar las tarjetas de películas */
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+/* Mensajes de carga o de no resultados */
+.loading-message, .no-results-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--text-color-secondary);
+  grid-column: 1 / -1; /* Ocupa todo el ancho de la cuadrícula */
+  padding: 4rem 0;
+}
+
+/* Media Query para responsividad en pantallas medianas y pequeñas */
 @media (max-width: 992px) {
   .cartelera-header {
-    flex-direction: column;
-    align-items: stretch;
-    flex-wrap: wrap;
+      flex-direction: column;
+      align-items: flex-start; /* Alinea todo a la izquierda */
   }
-  .controls-container {
-    width: 100%;
-    margin-left: 0;
-    flex-wrap: wrap;
-  }
-  .search-bar { flex: 1 1 100%; max-width: 100%; }
-  .select-wrapper { flex: 1 1 240px; }
 }
