@@ -1,7 +1,17 @@
 .navbar {
-  background-color: #0d1b2a; /* Azul oscuro */
-  padding: 1rem 2rem;
+  /* --- MEJORA 2: Navbar Pegajoso --- */
+  position: sticky; /* Hacemos que se "pegue" */
+  top: 0; /* Se pegará en la parte más alta de la pantalla */
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  
+  background-color: rgba(13, 27, 42, 0.85); /* Hacemos el fondo un poco traslúcido */
+  backdrop-filter: blur(10px); /* Efecto "cristal esmerilado" muy moderno */
+  -webkit-backdrop-filter: blur(10px);
+  
+  /* --- MEJORA 1: Más Grande y con Más Espacio --- */
+  padding: 1.5rem 3rem; /* Aumentamos el padding para darle más altura */
   border-bottom: 1px solid #1b263b;
+  transition: all 0.3s ease-in-out; /* Transición suave para cualquier cambio */
 }
 
 .navbar-container {
@@ -16,21 +26,47 @@
   color: var(--text-color);
   text-decoration: none;
   font-family: var(--font-headings);
-  font-size: 1.8rem;
+  /* --- MEJORA 1: Logo más grande --- */
+  font-size: 2.2rem; /* Aumentamos significativamente el tamaño */
   font-weight: 700;
+  transition: color 0.3s ease;
 }
 
+.navbar-logo a:hover {
+    color: var(--cinepolis-yellow);
+}
 
 .navbar-menu {
   display: flex;
-  gap: 2rem;
+  align-items: center; /* Centramos verticalmente con el nuevo tamaño */
+  gap: 2.5rem; /* Aumentamos la separación entre elementos */
 }
 
 .navbar-link {
   color: var(--text-color-secondary);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600; /* Un poco más de grosor */
+  /* --- MEJORA 1: Enlaces más grandes --- */
+  font-size: 1.1rem; 
   transition: color 0.3s ease;
+  position: relative; /* Para el efecto de la línea inferior */
+  padding-bottom: 5px;
+}
+
+/* Efecto de línea inferior al pasar el mouse */
+.navbar-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--cinepolis-yellow);
+    transition: width 0.3s ease;
+}
+
+.navbar-link:hover::after {
+    width: 100%;
 }
 
 .navbar-link:hover {
@@ -38,23 +74,30 @@
 }
 
 .ver-cartelera-btn {
-  background-color: var(--cinepolis-yellow); /* Usaremos una variable de color */
+  background-color: var(--cinepolis-yellow);
   color: #000;
   border: none;
-  padding: 0.8rem 1.5rem;
+  /* --- MEJORA 1: Botón más grande --- */
+  padding: 1rem 2rem;
+  font-size: 1rem; /* Hacemos la fuente del botón más grande */
   font-weight: bold;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px; /* Un poco más redondeado */
+  transition: all 0.3s ease;
 }
 
 .ver-cartelera-btn:hover {
-  background-color: #ffde7a; /* Un amarillo más claro */
+  background-color: #ffde7a;
+  transform: scale(1.05); /* Efecto de crecimiento sutil */
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
 }
 
 /* Estilos para móviles */
 @media (max-width: 768px) {
+  .navbar {
+    padding: 1rem 1.5rem; /* Ajustamos el padding para móviles */
+  }
   .navbar-menu {
-    display: none; /* Ocultamos el menú en pantallas pequeñas por simplicidad */
+    display: none;
   }
 }
