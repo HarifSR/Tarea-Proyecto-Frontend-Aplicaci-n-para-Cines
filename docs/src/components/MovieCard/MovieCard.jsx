@@ -1,15 +1,20 @@
-// src/components/MovieCard.jsx
 import React from 'react';
 import './MovieCard.css';
 
 const MovieCard = ({ movie }) => {
-  // Si el póster no carga, podemos usar una imagen por defecto
   const posterSrc = movie.Poster.includes("googleusercontent.com") || movie.Poster === "" 
     ? "https://via.placeholder.com/400x600.png?text=No+Image" 
     : movie.Poster;
 
+  // Lógica para la etiqueta
+  const currentYear = new Date().getFullYear();
+  const isPreventa = parseInt(movie.Year) > currentYear;
+
   return (
     <div className="movie-card">
+      {/* Si es preventa, mostramos la etiqueta */}
+      {isPreventa && <div className="card-tag">PREVENTA</div>}
+
       <div className="card-image-container">
         <img src={posterSrc} alt={`Póster de ${movie.Title}`} onError={(e) => { e.target.onerror = null; e.target.src="https://via.placeholder.com/400x600.png?text=No+Image" }}/>
         <div className="card-overlay">

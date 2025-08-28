@@ -5,6 +5,7 @@ import './App.css';
 import Navbar from './components/Navbar/Navbar';
 import HeroCarousel from './components/HeroCarousel/HeroCarousel';
 import MovieCard from './components/MovieCard/MovieCard'; // Asumiendo que moviste MovieCard a su propia carpeta
+import Footer from './components/Footer/Footer';
 
 const API_URL = 'https://movie.azurewebsites.net/api/cartelera?title=&ubication=';
 
@@ -87,6 +88,7 @@ function App() {
               <option key={ubication} value={ubication}>{ubication === 'all' ? 'Todas las ubicaciones' : ubication}</option>
             ))}
           </select>
+            <Footer />
         </div>
 
         {isLoading ? (
