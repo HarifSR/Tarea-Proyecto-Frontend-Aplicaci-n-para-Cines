@@ -1,42 +1,105 @@
-#root {
-  max-width: 1280px;
+/* src/App.css */
+.app-container {
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+header {
   text-align: center;
+  margin-bottom: 3rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+header h1 {
+  font-family: var(--font-headings);
+  color: var(--text-color);
+  font-size: 2.5rem;
+  letter-spacing: 1px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Contenedor para la barra de búsqueda y los filtros */
+.controls-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea en pantallas pequeñas */
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.search-bar {
+  position: relative;
+  min-width: 300px;
+  flex-grow: 1; /* Permite que crezca para ocupar espacio */
+  max-width: 500px;
 }
 
-.card {
-  padding: 2em;
+.search-bar .fa-search {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  color: var(--text-color-secondary);
 }
 
-.read-the-docs {
-  color: #888;
+.search-bar input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem; /* Espacio para el icono */
+  border-radius: 30px;
+  border: none;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: box-shadow 0.3s ease;
+}
+
+.search-bar input:focus {
+  outline: none;
+  box-shadow: 0 0 10px var(--primary-color);
+}
+
+/* Estilos para los filtros (select) */
+.filter-select {
+    padding: 1rem;
+    border: none;
+    border-radius: 30px;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    cursor: pointer;
+    min-width: 200px;
+}
+
+.filter-select:focus {
+    outline: none;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.loading-message, .no-results-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-color-secondary);
+    grid-column: 1 / -1; /* Ocupa todo el ancho del grid */
+}
+
+/* Media Query para responsividad */
+@media (max-width: 600px) {
+    .app-container {
+        padding: 1rem;
+    }
+    header h1 {
+        font-size: 2rem;
+    }
+    .controls-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .search-bar {
+        width: 100%;
+    }
 }
