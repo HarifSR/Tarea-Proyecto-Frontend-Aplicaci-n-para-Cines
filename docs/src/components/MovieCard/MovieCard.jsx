@@ -1,20 +1,20 @@
 import React from 'react';
 import './MovieCard.css';
 
-const MovieCard = ({ movie }) => {
+// 1. Recibimos la nueva prop 'onClick'
+const MovieCard = ({ movie, onClick }) => {
   const posterSrc = movie.Poster.includes("googleusercontent.com") || movie.Poster === "" 
     ? "https://via.placeholder.com/400x600.png?text=No+Image" 
     : movie.Poster;
-
-  // Lógica para la etiqueta
+  
   const currentYear = new Date().getFullYear();
   const isPreventa = parseInt(movie.Year) > currentYear;
 
   return (
-    <div className="movie-card">
-      {/* Si es preventa, mostramos la etiqueta */}
+    // 2. Añadimos el evento onClick al div principal
+    <div className="movie-card" onClick={onClick}>
       {isPreventa && <div className="card-tag">PREVENTA</div>}
-
+      
       <div className="card-image-container">
         <img src={posterSrc} alt={`Póster de ${movie.Title}`} onError={(e) => { e.target.onerror = null; e.target.src="https://via.placeholder.com/400x600.png?text=No+Image" }}/>
         <div className="card-overlay">
