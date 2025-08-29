@@ -1,11 +1,14 @@
 {
   "name": "docs",
+  "homepage": "https://HarifSR.github.io/Tarea-Proyecto-Frontend-Aplicaci-n-para-Cines",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -29,3 +32,4 @@
     "vite": "^7.1.2"
   }
 }
+
