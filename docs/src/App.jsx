@@ -6,7 +6,8 @@ import Navbar from './components/Navbar/Navbar';
 import HeroCarousel from './components/HeroCarousel/HeroCarousel';
 import MovieCard from './components/MovieCard/MovieCard';
 import Footer from './components/Footer/Footer';
-import MovieDetailsModal from './components/MovieDetailsModal/MovieDetailsModal'; // 1. Importa el nuevo componente
+import MovieDetailsModal from './components/MovieDetailsModal/MovieDetailsModal';
+import MegaMenu from './components/MegaMenu/MegaMenu';
 
 const API_URL = 'https://movie.azurewebsites.net/api/cartelera?title=&ubication=';
 
@@ -14,23 +15,17 @@ function App() {
   // --- ESTADOS ---
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedMovie, setSelectedMovie] = useState(null); // 2. Nuevo estado para la película seleccionada
-
-  // ... (otros estados como searchTerm, filterType, etc. se mantienen igual)
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterUbication, setFilterUbication] = useState('all');
 
-  // ... (useEffect y la lógica de filtros se mantienen igual)
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         const response = await fetch(API_URL);
-        let data = await response.json();
-        data = data.map(movie => ({
-            ...movie,
-            Ubication: movie.Ubication.charAt(0).toUpperCase() + movie.Ubication.slice(1).toLowerCase()
-        }));
+        const data = await response.json();
         setMovies(data);
       } catch (error) {
         console.error("Error al obtener las películas:", error);
@@ -41,20 +36,42 @@ function App() {
     fetchMovies();
   }, []);
 
+  // --- LÓGICA DE NORMALIZACIÓN AVANZADA ---
+
+  // Función para limpiar y estandarizar texto: quita tildes, ajusta mayúsculas, etc.
+  const normalizeText = (str) => {
+    if (!str) return '';
+    return str
+      .toLowerCase() // 1. Poner todo en minúsculas
+      .trim() // 2. Quitar espacios al inicio y final
+      .normalize('NFD') // 3. Separar tildes de las letras (ej: 'ó' -> 'o' + '´')
+      .replace(/[\u0300-\u036f]/g, '') // 4. Quitar las tildes y acentos
+      .split(' ') // 5. Separar en palabras
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // 6. Poner mayúscula a cada palabra
+      .join(' '); // 7. Unir de nuevo
+  };
+
+  // Generamos la lista de géneros, ahora normalizada
   const movieTypes = useMemo(() => {
-    const types = new Set(movies.map(movie => movie.Type));
-    return ['all', ...Array.from(types)];
+    const uniqueTypes = new Set(
+      movies.map(movie => normalizeText(movie.Type))
+    );
+    return ['all', ...Array.from(uniqueTypes).sort()];
   }, [movies]);
 
+  // Generamos la lista de ubicaciones, también normalizada
   const movieUbications = useMemo(() => {
-    const ubications = new Set(movies.map(movie => movie.Ubication));
-    return ['all', ...Array.from(ubications)];
+    const uniqueUbications = new Set(
+      movies.map(movie => normalizeText(movie.Ubication))
+    );
+    return ['all', ...Array.from(uniqueUbications).sort()];
   }, [movies]);
-  
+
   const filteredMovies = movies.filter(movie => {
     const matchesSearchTerm = movie.Title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === 'all' || movie.Type === filterType;
-    const matchesUbication = filterUbication === 'all' || movie.Ubication === filterUbication;
+    // Al filtrar, también normalizamos el dato de la película para que coincida
+    const matchesType = filterType === 'all' || normalizeText(movie.Type) === filterType;
+    const matchesUbication = filterUbication === 'all' || normalizeText(movie.Ubication) === filterUbication;
     return matchesSearchTerm && matchesType && matchesUbication;
   });
 
@@ -63,7 +80,12 @@ function App() {
     return candidates.slice(0, 5);
   }, [movies]);
 
-  // --- 3. Funciones para manejar el modal ---
+  const preventaMovies = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return movies.filter(movie => parseInt(movie.Year) > currentYear);
+  }, [movies]);
+
+  // --- MANEJADORES DE EVENTOS ---
   const handleMovieClick = (movie) => {
     setSelectedMovie(movie);
   };
@@ -72,16 +94,19 @@ function App() {
     setSelectedMovie(null);
   };
 
+  const handleToggleMegaMenu = () => {
+    setIsMegaMenuOpen(!isMegaMenuOpen);
+  };
+  
   return (
     <div className="app">
-      <Navbar />
+      <Navbar onPreventaClick={handleToggleMegaMenu} />
 
       {!isLoading && featuredMovies.length > 0 && (
         <HeroCarousel featuredMovies={featuredMovies} />
       )}
       
       <main className="app-container" id="cartelera">
-        {/* ... (código del cartelera-header se mantiene igual) ... */}
         <div className="cartelera-header">
           <h1 className="section-title">CARTELERA</h1>
           <div className="controls-container">
@@ -108,7 +133,6 @@ function App() {
           <div className="movies-grid">
             {filteredMovies.length > 0 ? (
               filteredMovies.map((movie) => (
-                // 4. Pasamos la función a cada MovieCard
                 <MovieCard 
                   key={`${movie.imdbID}-${Math.random()}`} 
                   movie={movie}
@@ -124,8 +148,14 @@ function App() {
 
       <Footer />
 
-      {/* 5. Renderizamos el modal aquí. Solo se mostrará si selectedMovie no es null */}
       <MovieDetailsModal movie={selectedMovie} onClose={handleCloseModal} />
+
+      {isMegaMenuOpen && (
+        <MegaMenu 
+          preventaMovies={preventaMovies}
+          onClose={handleToggleMegaMenu} 
+        />
+      )}
     </div>
   );
 }
