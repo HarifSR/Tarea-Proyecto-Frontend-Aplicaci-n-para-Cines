@@ -1,24 +1,19 @@
-/* --- ESTILOS GENERALES Y DE LAYOUT --- */
+/* --- Estilos Globales y Contenedores --- */
 .app-container {
   max-width: 1600px;
   margin: 0 auto;
   padding: 2rem 3rem;
 }
 
-/* --- NUEVO DISEÑO: PANEL DE CONTROL "GLASSMORPHISM" --- */
+/* --- Panel de Control de la Cartelera (Glassmorphism) --- */
 .cartelera-header {
-  /* Fondo semi-transparente y desenfocado */
-  background-color: rgba(28, 31, 45, 0.7); /* Color base con transparencia */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  /* Estilo del panel */
+  padding: 2rem;
+  background-color: rgba(28, 31, 45, 0.7);
+  border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 1.5rem 2.5rem;
-  margin-bottom: 4rem;
-
-  /* Layout interno */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-bottom: 3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -26,70 +21,30 @@
   gap: 1.5rem;
 }
 
-/* --- TÍTULO "CARTELERA" REDISEÑADO --- */
 .section-title {
   font-family: var(--font-headings);
   color: var(--text-color);
-  font-size: 2rem; /* Un poco más pequeño para encajar en el panel */
-  font-weight: 600;
-  letter-spacing: 1px;
+  font-size: 2.2rem;
   margin: 0;
-  /* Eliminamos la línea amarilla para un look más limpio */
-  padding-left: 0; 
-}
-.section-title::before {
-  display: none; /* Ocultamos la línea decorativa anterior */
+  letter-spacing: 1px;
 }
 
-
-/* --- CONTROLES REDISEÑADOS (ESTILO "PILL" O PÍLDORA) --- */
 .controls-container {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 1rem; /* Reducimos el espacio entre controles */
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
-/* Estilos base para todos los controles */
-.search-bar input,
-.filter-select {
-  height: 48px;
-  background-color: rgba(0, 0, 0, 0.2); /* Fondo oscuro y sutil */
-  color: var(--text-color-secondary);
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  border: 1px solid transparent; /* Borde invisible por defecto */
-  border-radius: 30px; /* Bordes completamente redondeados */
-  padding: 0.8rem 1.5rem;
-  transition: all 0.3s ease;
-}
-
-/* Efectos de hover y focus */
-.search-bar input:hover,
-.filter-select:hover {
-  background-color: rgba(0, 0, 0, 0.4);
-  color: var(--text-color);
-}
-
-.search-bar input:focus,
-.filter-select:focus {
-  outline: none;
-  border-color: var(--cinepolis-yellow);
-  background-color: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 0 15px rgba(255, 193, 7, 0.15);
-}
-
-/* Barra de búsqueda específica */
+/* --- Estilos para Barra de Búsqueda y Filtros --- */
 .search-bar {
   position: relative;
-  width: 300px;
 }
 
 .search-bar .fa-search {
   position: absolute;
   top: 50%;
-  left: 1.5rem;
+  left: 20px;
   transform: translateY(-50%);
   color: var(--text-color-secondary);
   transition: color 0.3s ease;
@@ -99,14 +54,41 @@
   color: var(--cinepolis-yellow);
 }
 
-.search-bar input {
-  padding-left: 3.5rem; /* Más espacio para el icono */
+.search-bar input,
+.filter-select {
+  height: 50px;
+  border-radius: 25px; /* Estilo píldora */
+  border: 1px solid transparent;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--text-color);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
 }
 
-/* Wrapper de los selects */
+.search-bar input {
+  padding: 0.8rem 1.5rem 0.8rem 3.5rem;
+  width: 300px;
+}
+
+.filter-select {
+  padding: 0.8rem 3rem 0.8rem 1.5rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.search-bar input:focus,
+.filter-select:focus {
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-color: var(--cinepolis-yellow);
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);
+}
+
 .select-wrapper {
   position: relative;
-  min-width: 180px;
+  min-width: 200px;
 }
 
 .select-wrapper::after {
@@ -119,22 +101,9 @@
   transform: translateY(-50%);
   color: var(--text-color-secondary);
   pointer-events: none;
-  transition: transform 0.3s ease;
 }
 
-.select-wrapper:hover::after {
-  transform: translateY(-50%) scale(1.1);
-}
-
-.filter-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 100%;
-  padding-right: 3rem;
-}
-
-/* --- ESTILOS DE LA CUADRÍCULA Y MENSAJES (SIN CAMBIOS) --- */
+/* --- Cuadrícula de Películas y Mensajes --- */
 .movies-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -149,16 +118,19 @@
   padding: 4rem 0;
 }
 
-/* --- RESPONSIVIDAD --- */
+/* --- Media Queries para Responsividad --- */
 @media (max-width: 992px) {
   .cartelera-header {
       flex-direction: column;
-      align-items: stretch; /* Hacemos que los elementos ocupen todo el ancho */
+      align-items: stretch;
   }
   .controls-container {
-    justify-content: flex-start;
+    justify-content: center;
   }
-  .search-bar {
-    width: 100%;
-  }
+}
+
+@media (max-width: 600px) {
+    .app-container {
+        padding: 1rem;
+    }
 }

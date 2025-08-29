@@ -1,17 +1,15 @@
+/* ... (los estilos existentes de .navbar, .navbar-container, etc. se mantienen) ... */
+
 .navbar {
-  /* --- MEJORA 2: Navbar Pegajoso --- */
-  position: sticky; /* Hacemos que se "pegue" */
-  top: 0; /* Se pegará en la parte más alta de la pantalla */
-  z-index: 1000; /* Asegura que esté por encima de otros elementos */
-  
-  background-color: rgba(13, 27, 42, 0.85); /* Hacemos el fondo un poco traslúcido */
-  backdrop-filter: blur(10px); /* Efecto "cristal esmerilado" muy moderno */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(13, 27, 42, 0.85);
+  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  
-  /* --- MEJORA 1: Más Grande y con Más Espacio --- */
-  padding: 1.5rem 3rem; /* Aumentamos el padding para darle más altura */
+  padding: 1.5rem 3rem;
   border-bottom: 1px solid #1b263b;
-  transition: all 0.3s ease-in-out; /* Transición suave para cualquier cambio */
+  transition: all 0.3s ease-in-out;
 }
 
 .navbar-container {
@@ -26,8 +24,7 @@
   color: var(--text-color);
   text-decoration: none;
   font-family: var(--font-headings);
-  /* --- MEJORA 1: Logo más grande --- */
-  font-size: 2.2rem; /* Aumentamos significativamente el tamaño */
+  font-size: 2.2rem;
   font-weight: 700;
   transition: color 0.3s ease;
 }
@@ -38,22 +35,21 @@
 
 .navbar-menu {
   display: flex;
-  align-items: center; /* Centramos verticalmente con el nuevo tamaño */
-  gap: 2.5rem; /* Aumentamos la separación entre elementos */
+  align-items: center;
+  gap: 2.5rem;
 }
 
 .navbar-link {
   color: var(--text-color-secondary);
   text-decoration: none;
-  font-weight: 600; /* Un poco más de grosor */
-  /* --- MEJORA 1: Enlaces más grandes --- */
-  font-size: 1.1rem; 
+  font-weight: 600;
+  font-size: 1.1rem;
   transition: color 0.3s ease;
-  position: relative; /* Para el efecto de la línea inferior */
+  position: relative;
   padding-bottom: 5px;
+  cursor: pointer;
 }
 
-/* Efecto de línea inferior al pasar el mouse */
 .navbar-link::after {
     content: '';
     position: absolute;
@@ -73,29 +69,57 @@
   color: var(--text-color);
 }
 
+/* --- ESTILOS ACTUALIZADOS --- */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Espacio entre los botones */
+}
+
+/* Estilos para el botón principal (sin cambios) */
 .ver-cartelera-btn {
   background-color: var(--cinepolis-yellow);
   color: #000;
   border: none;
-  /* --- MEJORA 1: Botón más grande --- */
   padding: 1rem 2rem;
-  font-size: 1rem; /* Hacemos la fuente del botón más grande */
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  border-radius: 8px; /* Un poco más redondeado */
+  border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .ver-cartelera-btn:hover {
   background-color: #ffde7a;
-  transform: scale(1.05); /* Efecto de crecimiento sutil */
+  transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
 }
 
-/* Estilos para móviles */
+/* --- NUEVOS ESTILOS para el botón "Añadir Película" --- */
+.add-movie-btn {
+  background-color: transparent;
+  border: 2px solid var(--cinepolis-yellow);
+  color: var(--cinepolis-yellow);
+  padding: calc(1rem - 2px); /* Ajustamos el padding para que tenga la misma altura que el otro botón */
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-movie-btn:hover {
+  background-color: var(--cinepolis-yellow);
+  color: #000;
+}
+
+/* Estilos para móviles (sin cambios) */
 @media (max-width: 768px) {
   .navbar {
-    padding: 1rem 1.5rem; /* Ajustamos el padding para móviles */
+    padding: 1rem 1.5rem;
   }
   .navbar-menu {
     display: none;
