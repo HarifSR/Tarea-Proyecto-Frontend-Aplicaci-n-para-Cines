@@ -10,10 +10,9 @@ import MovieDetailsModal from './components/MovieDetailsModal/MovieDetailsModal'
 import MegaMenu from './components/MegaMenu/MegaMenu';
 import MovieFormModal from './components/MovieFormModal/MovieFormModal';
 
-const API_URL = 'https://movie.azurewebsites.net/api/cartelera?title=&ubication=';
+const API_URL_BASE = 'https://movie.azurewebsites.net/api/cartelera';
 
 function App() {
-  // ... (Todos los estados y funciones se mantienen igual)
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMovie, setSelectedMovie] = useState(null);
@@ -27,7 +26,7 @@ function App() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL_BASE}?title=&ubication=`);
         const data = await response.json();
         setMovies(data);
       } catch (error) {
@@ -39,6 +38,7 @@ function App() {
     fetchMovies();
   }, []);
 
+  // --- LÓGICA DE NORMALIZACIÓN Y FILTROS (Sin cambios) ---
   const normalizeText = (str) => {
     if (!str) return '';
     return str.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -74,24 +74,69 @@ function App() {
     return movies.filter(movie => parseInt(movie.Year) > currentYear);
   }, [movies]);
 
-  const handleSaveMovie = (movieToSave) => {
-    const movieIndex = movies.findIndex(m => m.imdbID === movieToSave.imdbID);
-    if (movieIndex > -1) {
-      const updatedMovies = [...movies];
-      updatedMovies[movieIndex] = movieToSave;
-      setMovies(updatedMovies);
+  // --- FUNCIONES CRUD CONECTADAS A LA API Y CON DEPURACIÓN ---
+  const handleSaveMovie = async (movieToSave) => {
+    // PASO 1 DE DEPURACIÓN: Ver el objeto que llega del formulario.
+    console.log("Intentando guardar esta película:", movieToSave);
+
+    const isUpdating = movies.some(m => m.imdbID === movieToSave.imdbID);
+
+    if (isUpdating) {
+      // PASO 2 DE DEPURACIÓN: Confirmar que entra en la lógica de ACTUALIZAR.
+      console.log("Modo: ACTUALIZAR (PUT)");
+      try {
+        const response = await fetch(`${API_URL_BASE}?imdbID=${movieToSave.imdbID}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(movieToSave),
+        });
+        if (!response.ok) {
+            console.error('Error de la API al actualizar:', response.status, await response.text());
+            throw new Error('Error al actualizar la película.');
+        }
+        setMovies(movies.map(m => m.imdbID === movieToSave.imdbID ? movieToSave : m));
+        handleCloseForm(); // Mejora: Cerrar el formulario después de guardar
+      } catch (error) {
+        console.error("Error en PUT:", error);
+      }
     } else {
-      setMovies([movieToSave, ...movies]);
+      // PASO 2 DE DEPURACIÓN: Confirmar que entra en la lógica de AÑADIR.
+      console.log("Modo: AÑADIR (POST)");
+      try {
+        const response = await fetch(API_URL_BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(movieToSave),
+        });
+        if (!response.ok) {
+            // PASO 3 DE DEPURACIÓN: Ver el error de la API si falla.
+            console.error('Error de la API al añadir:', response.status, await response.text());
+            throw new Error('Error al añadir la película.');
+        }
+        setMovies([movieToSave, ...movies]);
+        handleCloseForm(); // Mejora: Cerrar el formulario después de guardar
+      } catch (error) {
+        console.error("Error en POST:", error);
+      }
     }
   };
 
-  const handleDeleteMovie = (movieId) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta película?')) {
-      setMovies(movies.filter(m => m.imdbID !== movieId));
-      handleCloseModal();
+  const handleDeleteMovie = async (movieId) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta película? Esta acción es permanente.')) {
+      try {
+        const response = await fetch(`${API_URL_BASE}?imdbID=${movieId}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) throw new Error('Error al eliminar la película.');
+        setMovies(movies.filter(m => m.imdbID !== movieId));
+        handleCloseModal();
+      } catch (error) {
+        console.error("Error en DELETE:", error);
+      }
     }
   };
 
+  // --- MANEJADORES DE MODALES (Sin cambios) ---
   const handleMovieClick = (movie) => setSelectedMovie(movie);
   const handleCloseModal = () => setSelectedMovie(null);
   const handleToggleMegaMenu = () => setIsMegaMenuOpen(!isMegaMenuOpen);
@@ -114,88 +159,38 @@ function App() {
 
   return (
     <div className="app">
-      {/* 1. Pasamos la función onAddMovieClick como prop */}
-      <Navbar 
-        onPreventaClick={handleToggleMegaMenu}
-        onAddMovieClick={handleOpenFormToAdd}
-      />
-
-      {!isLoading && featuredMovies.length > 0 && (
-        <HeroCarousel featuredMovies={featuredMovies} />
-      )}
-      
+      <Navbar onPreventaClick={handleToggleMegaMenu} onAddMovieClick={handleOpenFormToAdd} />
+      {!isLoading && featuredMovies.length > 0 && <HeroCarousel featuredMovies={featuredMovies} />}
       <main className="app-container" id="cartelera">
-        {/* ... (el resto del JSX de la cartelera se mantiene igual) ... */}
         <div className="cartelera-header">
             <h1 className="section-title">CARTELERA</h1>
             <div className="controls-container">
               <div className="search-bar">
                 <i className="fa-solid fa-search"></i>
-                <input
-                  type="text"
-                  placeholder="Busca por título..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                <input type="text" placeholder="Busca por título..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
               </div>
               <div className="select-wrapper">
                 <select className="filter-select" value={filterType} onChange={(e) => setFilterType(e.target.value)}>
-                  {movieTypes.map(type => (
-                    <option key={type} value={type}>{type === 'all' ? 'Todos los géneros' : type}</option>
-                  ))}
+                  {movieTypes.map(type => <option key={type} value={type}>{type === 'all' ? 'Todos los géneros' : type}</option>)}
                 </select>
               </div>
               <div className="select-wrapper">
                 <select className="filter-select" value={filterUbication} onChange={(e) => setFilterUbication(e.target.value)}>
-                  {movieUbications.map(ubication => (
-                    <option key={ubication} value={ubication}>{ubication === 'all' ? 'Todas las ubicaciones' : ubication}</option>
-                  ))}
+                  {movieUbications.map(ubication => <option key={ubication} value={ubication}>{ubication === 'all' ? 'Todas las ubicaciones' : ubication}</option>)}
                 </select>
               </div>
             </div>
         </div>
-        
-        {isLoading ? ( <p className="loading-message">Cargando cartelera...</p> ) : (
+        {isLoading ? <p className="loading-message">Cargando cartelera...</p> : (
           <div className="movies-grid">
-            {filteredMovies.map((movie) => (
-              <MovieCard 
-                key={`${movie.imdbID}-${Math.random()}`} 
-                movie={movie}
-                onClick={() => handleMovieClick(movie)} 
-              />
-            ))}
+            {filteredMovies.map((movie) => <MovieCard key={`${movie.imdbID}-${Math.random()}`} movie={movie} onClick={() => handleMovieClick(movie)} />)}
           </div>
         )}
       </main>
-
-      {/* 2. El botón flotante <button className="fab"> ha sido ELIMINADO de aquí */}
-
       <Footer />
-
-      {/* ... (El resto de los modales se mantienen igual) ... */}
-      {selectedMovie && (
-        <MovieDetailsModal 
-          movie={selectedMovie} 
-          onClose={handleCloseModal}
-          onEdit={handleOpenFormToEdit}
-          onDelete={handleDeleteMovie}
-        />
-      )}
-
-      {isFormOpen && (
-        <MovieFormModal 
-          movie={editingMovie}
-          onClose={handleCloseForm}
-          onSave={handleSaveMovie}
-        />
-      )}
-
-      {isMegaMenuOpen && (
-        <MegaMenu 
-          preventaMovies={preventaMovies}
-          onClose={handleToggleMegaMenu} 
-        />
-      )}
+      <MovieDetailsModal movie={selectedMovie} onClose={handleCloseModal} onEdit={handleOpenFormToEdit} onDelete={handleDeleteMovie} />
+      {isFormOpen && <MovieFormModal movie={editingMovie} onClose={handleCloseForm} onSave={handleSaveMovie} />}
+      {isMegaMenuOpen && <MegaMenu preventaMovies={preventaMovies} onClose={handleToggleMegaMenu} />}
     </div>
   );
 }
