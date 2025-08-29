@@ -7,7 +7,7 @@ const Navbar = ({ onPreventaClick, onAddMovieClick }) => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          <a href="/">CineMatrix</a>
+          <a href="/">CinePolis</a>
         </div>
         <div className="navbar-menu">
           <a href="#cartelera" className="navbar-link">Cartelera</a>
