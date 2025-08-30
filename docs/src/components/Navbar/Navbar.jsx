@@ -1,28 +1,25 @@
 import React from 'react';
 import './Navbar.css';
 
-// 1. Añadimos 'onAddMovieClick' a la lista de props que el componente recibe.
+// 1. Recibimos la nueva prop 'onAddMovieClick'
 const Navbar = ({ onPreventaClick, onAddMovieClick }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          <a href="/">CineMatrix</a>
+          <a href="/">CinePolis</a>
         </div>
         <div className="navbar-menu">
           <a href="#cartelera" className="navbar-link">Cartelera</a>
-          <a href="#preventas" className="navbar-link" onClick={(e) => {
-              e.preventDefault(); // Evita que el link '#' salte la página
-              onPreventaClick();
-            }}>
+          <a href="#preventas" className="navbar-link" onClick={(e) => { e.preventDefault(); onPreventaClick(); }}>
             Preventas
           </a>
           <a href="#cines" className="navbar-link">Cines</a>
         </div>
         <div className="navbar-actions">
-           {/* 2. Usamos la nueva prop en el evento onClick de este botón. */}
+          {/* 2. Añadimos el nuevo botón y le asignamos el onClick */}
           <button className="add-movie-btn" onClick={onAddMovieClick}>
-            <i className="fa-solid fa-plus"></i> Añadir Película
+            <i className="fa-solid fa-plus"></i> Formulario
           </button>
           <button className="ver-cartelera-btn">VER CARTELERA</button>
         </div>
