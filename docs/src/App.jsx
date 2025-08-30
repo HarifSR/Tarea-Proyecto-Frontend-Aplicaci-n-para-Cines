@@ -38,7 +38,7 @@ function App() {
     fetchMovies();
   }, []);
 
-  // --- LÓGICA DE NORMALIZACIÓN Y FILTROS (Sin cambios) ---
+  // --- LÓGICA DE NORMALIZACIÓN Y FILTROS ---
   const normalizeText = (str) => {
     if (!str) return '';
     return str.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -74,47 +74,49 @@ function App() {
     return movies.filter(movie => parseInt(movie.Year) > currentYear);
   }, [movies]);
 
-  // --- FUNCIONES CRUD CONECTADAS A LA API Y CON DEPURACIÓN ---
+  // --- FUNCIONES CRUD CORREGIDAS ---
   const handleSaveMovie = async (movieToSave) => {
-    // PASO 1 DE DEPURACIÓN: Ver el objeto que llega del formulario.
-    console.log("Intentando guardar esta película:", movieToSave);
-
-    const isUpdating = movies.some(m => m.imdbID === movieToSave.imdbID);
+    const isUpdating = !!editingMovie;
 
     if (isUpdating) {
-      // PASO 2 DE DEPURACIÓN: Confirmar que entra en la lógica de ACTUALIZAR.
-      console.log("Modo: ACTUALIZAR (PUT)");
+      // --- LÓGICA PARA ACTUALIZAR (PUT) ---
       try {
         const response = await fetch(`${API_URL_BASE}?imdbID=${movieToSave.imdbID}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(movieToSave),
         });
-        if (!response.ok) {
-            console.error('Error de la API al actualizar:', response.status, await response.text());
-            throw new Error('Error al actualizar la película.');
-        }
+        if (!response.ok) throw new Error('Error al actualizar la película.');
         setMovies(movies.map(m => m.imdbID === movieToSave.imdbID ? movieToSave : m));
-        handleCloseForm(); // Mejora: Cerrar el formulario después de guardar
+        handleCloseForm();
       } catch (error) {
         console.error("Error en PUT:", error);
       }
     } else {
-      // PASO 2 DE DEPURACIÓN: Confirmar que entra en la lógica de AÑADIR.
-      console.log("Modo: AÑADIR (POST)");
+      // --- LÓGICA PARA AÑADIR (POST) - CORREGIDA ---
       try {
+        // CORRECCIÓN: Asegurarse de que el objeto a enviar tenga el formato correcto.
+        const movieWithEstado = {
+          ...movieToSave,
+          Estado: true // Añadimos el campo 'Estado' requerido por la API.
+        };
+
         const response = await fetch(API_URL_BASE, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(movieToSave),
+          body: JSON.stringify(movieWithEstado), // Enviamos el objeto corregido
         });
+
         if (!response.ok) {
-            // PASO 3 DE DEPURACIÓN: Ver el error de la API si falla.
-            console.error('Error de la API al añadir:', response.status, await response.text());
-            throw new Error('Error al añadir la película.');
+          const errorText = await response.text();
+          throw new Error(`Error de la API al añadir: ${errorText}`);
         }
-        setMovies([movieToSave, ...movies]);
-        handleCloseForm(); // Mejora: Cerrar el formulario después de guardar
+        
+        const newlySavedMovie = await response.json();
+        
+        setMovies([newlySavedMovie, ...movies]);
+        handleCloseForm();
+
       } catch (error) {
         console.error("Error en POST:", error);
       }
@@ -122,7 +124,7 @@ function App() {
   };
 
   const handleDeleteMovie = async (movieId) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta película? Esta acción es permanente.')) {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta película?')) {
       try {
         const response = await fetch(`${API_URL_BASE}?imdbID=${movieId}`, {
           method: 'DELETE',
@@ -136,7 +138,7 @@ function App() {
     }
   };
 
-  // --- MANEJADORES DE MODALES (Sin cambios) ---
+  // --- MANEJADORES DE MODALES ---
   const handleMovieClick = (movie) => setSelectedMovie(movie);
   const handleCloseModal = () => setSelectedMovie(null);
   const handleToggleMegaMenu = () => setIsMegaMenuOpen(!isMegaMenuOpen);
@@ -196,3 +198,4 @@ function App() {
 }
 
 export default App;
+
