@@ -71,7 +71,8 @@ function App() {
   
   const preventaMovies = useMemo(() => {
     const currentYear = new Date().getFullYear();
-    return movies.filter(movie => parseInt(movie.Year) > currentYear);
+    // CORRECCIÓN: Usamos >= para incluir películas del año actual en preventas.
+    return movies.filter(movie => parseInt(movie.Year) >= currentYear);
   }, [movies]);
 
   // --- FUNCIONES CRUD CORREGIDAS ---
